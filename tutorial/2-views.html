@@ -26,15 +26,23 @@ var Comment = Backbone.Model.extend({
   initialize: function(message) {
     /* Set the initial values for `votes` to 0 and `message` to the message.
      * Remember to use setters when working with attributes! */
+     this.set('count', 0);
+     this.set('message', message);
   },
   votes: function() {
-    /* Return the votes attribute on this model.
-     * Remember to use a getter when working with attributes! */
+    return this.get('count');
+     // Return the votes attribute on this model.
+     // * Remember to use a getter when working with attributes! 
   },
   upvote: function(){
+    this.set('count', this.get('count') + 1);
     // Set the `votes` attribute to the current vote count plus one.
-  }
+  },
   // Add a downvote function; don't forget the comma above.
+  downvote: function(){
+    this.set('count', this.get('count') - 1);
+  }
+
 });
 
 /* - Backbone VIEW ------------------------------------------------------------
@@ -54,7 +62,7 @@ var CommentView = Backbone.View.extend({
    * every comment's view to have an event listener on `change` so that
    * it will re-render itself if the `votes` attribute changes. */
   initialize: function() {
-    this.model.on('change:votes', function() {
+    this.model.on('change:count', function() {
     /* Let's break down the line above:
      * - `this`           => the CommentView instance
      * - `this.model`     => the model associated with this view instance
@@ -84,7 +92,7 @@ var CommentView = Backbone.View.extend({
     var html = [
       '<div>',
         '<span class="votes">',
-          this.model.get('votes'),
+          this.model.get('count'),
         '<span>',
         '<span class="comment">',
           this.model.get('message'),
@@ -138,6 +146,7 @@ var commentView = new CommentView({ model: comment });
 
 // Append the view to the page. This is why we returned html from `render`:
 // $('body').append(commentView.render());
+$('body').append(commentView.render());
 
 /* The number of votes should be 0.
  * We set that as the initial default value in the comment model.
@@ -145,7 +154,9 @@ var commentView = new CommentView({ model: comment });
  * Let's change it and see our eventlistener in action.
  * Uncomment the line below and reload the page,
  * and it should say '1' to the left of the comment. */
-// comment.upvote();
+comment.upvote();
+comment.upvote();
+
 
 /* play with this in your console as well.
  * You can modify the comment object in the same way we just did:
